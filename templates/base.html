@@ -27,11 +27,11 @@
     {% if messages %} 
     {% for category,message in messages %} 
     {% if category=='error'%}
-    <div class="alert" role="alert">
+    <div class="error">
       <p style="color: red" align="center">{{ message }}</p>
     </div>
     {% else %}
-    <div class="alert" role="alert">
+    <div class="success">
       <p style="color: green" align="center">{{ message }}</p>
     </div>
     {% endif %} {% endfor %} {% endif %} {% endwith %}
