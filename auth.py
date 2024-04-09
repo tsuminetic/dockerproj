@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request,flash, redirect, url_for
 from models import User
 from app import db
-from werkzeug.security import generate_passwordord_hash,check_passwordord_hash
+from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_required,login_user,logout_user, current_user
 
 
@@ -15,7 +15,7 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     logout_user()
-    #if the user fills the email and passwordord field and clicks the login button
+    #if the user fills the email and password field and clicks the login button
     if request.method=='POST':
         email=request.form.get('email')
         password=request.form.get('password')
@@ -23,8 +23,8 @@ def login():
         user = User.query.filter_by(email=email).first()
         #if the user exists
         if user:
-            #and if the passwordord matches, login the user redirecting to the home page
-            if check_passwordord_hash(user.password, password):
+            #and if the password matches, login the user redirecting to the home page
+            if check_password_hash(user.password, password):
                 login_user(user, remember=True)
                 return redirect(url_for('views.home'))
             else:
@@ -68,10 +68,10 @@ def signup():
             flash('name is too short', category="error")
         #if the pw is too short 
         elif len(password)<7:
-            flash('passwordord is too short', category="error")
+            flash('password is too short', category="error")
         #if everything is okay we create a instance of the model User containing the user details and hashed pw
         else:
-            new_user = User(email=email,name=name, password = generate_passwordord_hash(password, method='pbkdf2:sha256'))
+            new_user = User(email=email,name=name, password = generate_password_hash(password, method='pbkdf2:sha256'))
             #add the new_user to the db and commit
             db.session.add(new_user)
             db.session.commit()
