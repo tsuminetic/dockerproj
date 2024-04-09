@@ -1,42 +1,45 @@
-{% extends "base.html" %} {% block head %}<title>signup</title>{% endblock %} {%
+{% extends "base.html" %} {% block head %}<title>Many.do</title>{% endblock %} {%
 block body %}
 
 
-
+<p class="logintext" align="center">Sign up</p>
+<div class="form-container">
 <form method="POST" align="center">
-  <h3 align="center">signup</h3>
-  <div class="form-group">
-    <label for="email">Email</label><br />
-    <input
+    <div class="input-group">
+        
+        <input required autocomplete="off" 
+          type="text"
+          class="input"
+          id="name"
+          name="name"
+        />
+        <label for="name" class="label">Name</label>
+      </div>
+      <br>
+  <div class="input-group">
+    
+    <input required autocomplete="off" 
       type="email"
-      class="form-control"
+      class="input"
       id="email"
       name="email"
-      placeholder="enter email"
     />
+    <label class="label" for="email">Email</label>
   </div>
-  <div class="form-group">
-    <label for="name">Name</label><br />
-    <input
-      type="text"
-      class="form-control"
-      id="name"
-      name="name"
-      placeholder="enter name"
-    />
-  </div>
-  <div class="form-group">
-    <label for="passw">password</label><br />
-    <input
+  <br>
+  <div class="input-group">
+    <input required autocomplete="off" 
       type="password"
-      class="form-control"
+      class="input"
       id="passw"
       name="passw"
-      placeholder="enter password"
     />
+    <label class="label" for="passw">password</label>
   </div>
   <br />
-  <button type="submit" class="btn">submit</button>
+  <button type="submit" class="btn"><span>Submit</span></button>
 </form>
+</div>
+
 
 {% endblock %}

@@ -67,8 +67,8 @@ def signup():
         elif len(name)<2:
             flash('name is too short', category="error")
         #if the pw is too short 
-        elif len(passw)<7:
-            flash('password is too short', category="error")
+        # elif len(passw)<7:
+        #     flash('password is too short', category="error")
         #if everything is okay we create a instance of the model User containing the user details and hashed pw
         else:
             new_user = User(email=email,name=name, passw = generate_password_hash(passw, method='pbkdf2:sha256'))
