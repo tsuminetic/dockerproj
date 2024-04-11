@@ -4,7 +4,6 @@ from flask_login import LoginManager
 
 #defining db
 db = SQLAlchemy()
-
 def create_app():
     app = Flask(__name__)
     #securing the app
@@ -14,11 +13,14 @@ def create_app():
     #initializing the db
     db.init_app(app)
 
-    
+    UPLOAD_FOLDER = '/static/uploads/'  # Adjusted path, no leading slash
+    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     #importing and registering the blueprints
     from views import views
     from auth import auth
 
+    auth.config = {'UPLOAD_FOLDER': UPLOAD_FOLDER}
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 

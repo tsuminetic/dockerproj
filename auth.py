@@ -45,7 +45,13 @@ def logout():
     logout_user()
     return redirect(url_for("auth.login"))
 
+import os
 
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
+# Function to check file extensions
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 #creating the route for signup page 
@@ -76,6 +82,17 @@ def signup():
             db.session.add(new_user)
             db.session.commit()
             flash('Account created!', category="success")
-            #redirect to the login page
-            return redirect(url_for('auth.login'))
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            if file and allowed_file(file.filename):
+                file.filename=name+str(new_user.id)+".png"
+                file_path = os.path.join('static', 'uploads', file.filename)
+                file.save(file_path)
+                #redirect to the login page
+                return redirect(url_for('auth.login'))
+            else:
+                flash('Invalid file extension',category='error')
+            
     return render_template("signup.html", user= current_user)
