@@ -56,6 +56,7 @@ def logout():
 
 
 import os
+from shutil import copyfile
 
 
 #for the User avatar
@@ -119,13 +120,15 @@ def signup():
                 #defining the path to save the avatar
                 file_path = os.path.join('static', 'uploads', file.filename)
                 file.save(file_path)
-
-
-                #redirect to the login page
-                return redirect(url_for('auth.login'))
             
             else:
-                #if the uploaded file is not of the allowed extensions
-                flash('Invalid file extension',category='error')
+
+                # If no file uploaded, copy default.png as user's avatar
+                default_avatar_path = os.path.join('static', 'uploads', 'default.png')
+                user_avatar_path = os.path.join('static', 'uploads', f'{name}{new_user.id}.png')
+                copyfile(default_avatar_path, user_avatar_path)
+
+            #redirect to the login page
+            return redirect(url_for('auth.login'))
             
     return render_template("signup.html", user= current_user)
