@@ -3,8 +3,8 @@ from models import User
 from app import db
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_required,login_user,logout_user, current_user
-
-
+import os
+from shutil import copyfile
 
 #creating a blueprint named auth
 auth = Blueprint('auth', __name__)
@@ -53,19 +53,9 @@ def logout():
     logout_user()
     return redirect(url_for("auth.login"))
 
-
-
-import os
-from shutil import copyfile
-
-
-#for the User avatar
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
-
-# Function to check file extensions
+#checking extensions of the uploaded file
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
 
 
 #creating the route for signup page 
@@ -111,24 +101,30 @@ def signup():
             #checking for avatar
             file = request.files['file']
 
-            #if avatar exists and has a allowed extension
-            if file and allowed_file(file.filename):
-
-                #give the file a unique name so theres no complications
-                file.filename=name+str(new_user.id)+".png"
-
-                #defining the path to save the avatar
-                file_path = os.path.join('static', 'uploads', file.filename)
-                file.save(file_path)
-            
-            else:
-
-                # If no file uploaded, copy default.png as user's avatar
-                default_avatar_path = os.path.join('static', 'uploads', 'default.png')
-                user_avatar_path = os.path.join('static', 'uploads', f'{name}{new_user.id}.png')
-                copyfile(default_avatar_path, user_avatar_path)
+            save_avatar(file, name, new_user.id)
 
             #redirect to the login page
             return redirect(url_for('auth.login'))
             
     return render_template("signup.html", user= current_user)
+
+
+
+def save_avatar(file, name, user_id):
+
+    #if avatar exists and has a allowed extension
+    if file and allowed_file(file.filename):
+
+        #give the file a unique name so theres no complications
+        file.filename=name+str(user_id)+".png"
+
+        #defining the path to save the avatar
+        file_path = os.path.join('static', 'uploads', file.filename)
+        file.save(file_path)
+            
+    else:
+        
+        # If no file uploaded, copy default.png as user's avatar
+        default_avatar_path = os.path.join('static', 'uploads', 'default.png')
+        user_avatar_path = os.path.join('static', 'uploads', f'{name}{user_id}.png')
+        copyfile(default_avatar_path, user_avatar_path)
