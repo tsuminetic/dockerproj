@@ -4,23 +4,25 @@ from flask_login import LoginManager
 
 #defining db
 db = SQLAlchemy()
+
+
 def create_app():
     app = Flask(__name__)
+
     #securing the app
     app.config['SECRET_KEY'] = 'hfsagkjhasgfjkhas'
+
     #configuring the db
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    
     #initializing the db
     db.init_app(app)
 
-    UPLOAD_FOLDER = '/static/uploads/'  # Adjusted path, no leading slash
-    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
     #importing and registering the blueprints
     from views import views
     from auth import auth
 
-    auth.config = {'UPLOAD_FOLDER': UPLOAD_FOLDER}
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
@@ -28,7 +30,7 @@ def create_app():
 
     from models import User, Note
 
-    #yet to understand
+    #session manager
     login_manager=LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
@@ -41,5 +43,6 @@ def create_app():
     with app.app_context():
         from models import db as models_db
         models_db.create_all()
+        
 
     return app
