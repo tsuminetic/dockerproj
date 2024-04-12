@@ -36,7 +36,7 @@ def create_app():
     login_manager.init_app(app)
 
     @login_manager.user_loader
-    def load_user(id):
+    def load_user(id: str) -> User:
         return User.query.get(int(id))
 
     #creating the db models

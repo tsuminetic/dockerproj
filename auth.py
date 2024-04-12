@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_required,login_user,logout_user, current_user
 import os
 from shutil import copyfile
+import re
 
 #creating a blueprint named auth
 auth = Blueprint('auth', __name__)
@@ -54,8 +55,11 @@ def logout():
     return redirect(url_for("auth.login"))
 
 #checking extensions of the uploaded file
+# def allowed_file(filename):
+#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
+
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
+    return bool(re.match(r'^.+\.([Pp][Nn][Gg]|[Jj][Pp][Ee]?[Gg])$', filename))
 
 
 #creating the route for signup page 
@@ -110,7 +114,7 @@ def signup():
 
 
 
-def save_avatar(file, name, user_id):
+def save_avatar(file, name:str, user_id:int):
 
     #if avatar exists and has a allowed extension
     if file and allowed_file(file.filename):
