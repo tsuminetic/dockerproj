@@ -1,9 +1,40 @@
-{% extends "base.html" %} {% block head %}<title>Many.do</title>{% endblock %} {%
-block body %}
+{% extends "base.html" %}
 
 
-<h1 align="center">Notes</h1>
+{% block head %}
 
+
+<title>Many.do</title>
+
+
+{% endblock %} 
+
+{% block body %}
+
+<style>
+  aside {
+    background-color: #CCCCCC;
+    float: right;
+    width: 380px;
+    padding-left: 20px;
+  }
+  section {
+    margin-right: 400px; /* Ensure there's space for the aside */
+  }
+</style>
+
+
+
+<aside style="background-color: gray;">
+  <p>hello</p>
+</aside>
+
+
+
+
+<section>
+  
+<h1 align="start" style="margin-left: 5%;margin-top: 1% ;">Welcome back, {{ user.name}}</h1>
 
 <ul class="list-group" id="notes">
   <div class="container">
@@ -21,9 +52,6 @@ block body %}
   </div>
 </ul>
 
-
-
-
 <form method="POST" align="center">
   <textarea name="note" id="note" class="form-control"></textarea>
   <div>
@@ -31,6 +59,7 @@ block body %}
   </div>
 </form>
 
+</section>
 
 
 {% endblock %}
