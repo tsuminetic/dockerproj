@@ -3,6 +3,7 @@ from flask_login import login_required,current_user
 from models import Note
 from app import db
 import json
+from flask import url_for,redirect
 
 
 #creating blueprint named views
@@ -29,6 +30,7 @@ def home():
             #we add the instance to the database and commit
             db.session.add(new_note)
             db.session.commit()
+            return redirect(url_for('views.home'))
 
     return render_template("index.html", user= current_user)
 

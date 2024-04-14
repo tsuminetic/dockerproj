@@ -6,12 +6,6 @@
 
 {% block body %}
 <style>
-  aside {
-    background-color: #CCCCCC;
-    float: right;
-    width: 380px;
-    padding-left: 20px;
-  }
   section {
     margin-right: 400px; /* Ensure there's space for the aside */
   }
@@ -35,7 +29,15 @@
     margin-bottom: 10px; /* Add space between list items */
     border-radius: 10px; /* Add rounded corners */
     position: relative; /* Position relative for absolute positioning of delete button */
-  }
+    height: 60px;
+    font-size: large;
+    display: flex; /* Use flexbox for centering */
+    justify-content: start; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    white-space: nowrap; /* Prevent line breaks */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Show ellipsis for overflow */
+}
 
   textarea {
     width: calc(100% - 115px); /* Adjust width */
@@ -47,6 +49,7 @@
     position: absolute; /* Position the textarea */
     bottom: 10px; /* Distance from the bottom */
     left: 10px; /* Distance from the left */
+    font-size: large;
   }
   button[type="submit"] {
     position: absolute; /* Position the button */
@@ -56,12 +59,54 @@
     height: 50px; /* Adjust button height */
     border-radius: 10px; /* Add rounded corners */
   }
+  .list-group-item button.close {
+      width: 7%;
+      position: absolute;
+      top: 10px;
+      right: 10px; /* Align to the right */
+      z-index: 1; /* Ensure the button is above the list item content */
+      border-radius: 7px;
+      background-color: rgba(255, 0, 0, 0.423);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+  }
+  .list-group-item button.close span {
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.7px;
+  }
+  .list-group-item button.close:hover {
+    background-color: rgba(255, 0, 0, 0.614);
+  }
+
+  .aside-container {
+      background-color: rgba(128, 128, 128, 0.53);
+      width: 580px;
+      height: 570px;
+      border-radius: 10px;
+      float: right;
+      margin-left: 20px;
+      overflow: hidden;
+      margin-top: 1%;
+    }
+  
+    /* Style for the content inside the aside container */
+    .aside-content {
+      padding: 20px;
+    }
 </style>
 
-<aside style="background-color: gray;">
-  <p>hello</p>
-  <!-- Add more content here if needed -->
-</aside>
+  <aside>
+    <div class="aside-container">
+      <p style="font-size: xx-large; padding-left:10px;color: rgb(255, 255, 255);">Lists</p>
+      <hr>
+      <div class="aside-content">
+        <p>hello</p>
+      </div>
+    </div>
+  </aside>
+
+
 
 <section>
   <h1 align="start" style="padding-left: 10px;margin-top: 1% ;">Welcome back, {{ user.name}}</h1>
@@ -70,18 +115,53 @@
     <ul class="list-group notes-list" id="notes">
       {% for note in user.notes %}
       <li class="list-group-item">
-        {{ note.data }}
+        <p class="note-text">{{ note.data }}</p>
         <button type="button" class="close" onClick="deleteNote('{{ note.id }}')">
           <span aria-hidden="true">&times;</span>
         </button>
       </li>
       {% endfor %}
     </ul>
-
+    <hr>
     <form method="POST">
       <textarea name="note" id="note" class="form-control" placeholder="Type your notes here"></textarea>
       <button type="submit" class="'btn">Add note</button>
     </form>
   </div>
 </section>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      var notes = document.querySelectorAll('.list-group-item');
+  
+      notes.forEach(function(note) {
+          var textElement = note.querySelector('.note-text'); // Assuming there's a class "note-text" for the text content
+          var deleteButton = note.querySelector('.close'); // Assuming there's a class "close" for the delete button
+          var text = textElement.textContent.trim();
+          var containerWidth = note.offsetWidth; // Width of the note container
+          var buttonWidth = deleteButton.offsetWidth; // Width of the delete button
+          var availableWidth = containerWidth - buttonWidth; // Available space for text
+  
+          // Adjust available width for padding or margin if any
+          availableWidth -= 20; // Assuming 10px padding/margin on each side
+  
+          // Measure text width
+          textElement.style.visibility = 'hidden';
+          var textWidth = textElement.offsetWidth;
+          textElement.style.visibility = 'visible';
+  
+          // Compare text width with available width
+          if (textWidth > availableWidth) {
+              // Truncate text and add ellipsis
+              while (textElement.offsetWidth > availableWidth - 20) { // Adjust for padding/margin
+                  text = text.slice(0, -1);
+                  textElement.textContent = text + '...';
+              }
+          }
+      });
+  });
+  </script>
+
+
 {% endblock %}
