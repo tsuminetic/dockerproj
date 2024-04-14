@@ -20,7 +20,7 @@ def home():
 
         #if note is empty we flash that the note is empty
         if len(note)<1:
-            flash('note empty!', category='error')
+            pass
 
         else:
             # if note isnt empty we create an instance of the class note where data is the note we stored in the last block and user_id is the current users id
@@ -29,9 +29,6 @@ def home():
             #we add the instance to the database and commit
             db.session.add(new_note)
             db.session.commit()
-
-            #flash note is added
-            flash('note added!', category='success')
 
     return render_template("index.html", user= current_user)
 

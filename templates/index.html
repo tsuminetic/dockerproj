@@ -1,16 +1,10 @@
 {% extends "base.html" %}
 
-
 {% block head %}
-
-
 <title>Many.do</title>
-
-
 {% endblock %} 
 
 {% block body %}
-
 <style>
   aside {
     background-color: #CCCCCC;
@@ -21,45 +15,73 @@
   section {
     margin-right: 400px; /* Ensure there's space for the aside */
   }
+  .notes-container {
+    height: 500px; /* Set a fixed height */
+    background-color: #746e6e7e; /* Set a different color for the container */
+    padding: 10px; /* Add padding for better visibility */
+    border-radius: 10px; /* Add rounded corners */
+    margin-left: 1%;
+    margin-right: 1%;
+    position: relative; /* Set position to relative */
+    overflow: hidden; /* Hide overflowing content */
+  }
+  .notes-list {
+    height: calc(100% - 60px); /* Set height for the list, leaving space for the textarea and button */
+    overflow-y: auto; /* Enable vertical scrollbar */
+  }
+  .list-group-item {
+    background-color: rgb(203, 242, 250); 
+    padding: 10px; 
+    margin-bottom: 10px; /* Add space between list items */
+    border-radius: 10px; /* Add rounded corners */
+    position: relative; /* Position relative for absolute positioning of delete button */
+  }
+
+  textarea {
+    width: calc(100% - 115px); /* Adjust width */
+    height: 40px; /* Adjust height */
+    /* padding: 10px; Add padding */
+    border-radius: 10px; /* Add rounded corners */
+    resize: none; /* Disable resizing */
+    margin-bottom: 10px; /* Add space between textarea and button */
+    position: absolute; /* Position the textarea */
+    bottom: 10px; /* Distance from the bottom */
+    left: 10px; /* Distance from the left */
+  }
+  button[type="submit"] {
+    position: absolute; /* Position the button */
+    bottom: 15px; /* Distance from the bottom */
+    right: 15px; /* Distance from the right */
+    width: 80px; /* Adjust button width */
+    height: 50px; /* Adjust button height */
+    border-radius: 10px; /* Add rounded corners */
+  }
 </style>
-
-
 
 <aside style="background-color: gray;">
   <p>hello</p>
+  <!-- Add more content here if needed -->
 </aside>
 
-
-
-
 <section>
-  
-<h1 align="start" style="margin-left: 5%;margin-top: 1% ;">Welcome back, {{ user.name}}</h1>
+  <h1 align="start" style="padding-left: 10px;margin-top: 1% ;">Welcome back, {{ user.name}}</h1>
 
-<ul class="list-group" id="notes">
-  <div class="container">
-    {% for note in user.notes %}
-    <li
-      class="list-group-item"
-      style="background-color: antiquewhite; padding-bottom: 10px"
-    >
-      {{ note.data }}
-      <button type="button" class="close" onClick="deleteNote('{{ note.id }}')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </li>
-    {% endfor %}
+  <div class="notes-container">
+    <ul class="list-group notes-list" id="notes">
+      {% for note in user.notes %}
+      <li class="list-group-item">
+        {{ note.data }}
+        <button type="button" class="close" onClick="deleteNote('{{ note.id }}')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <form method="POST">
+      <textarea name="note" id="note" class="form-control" placeholder="Type your notes here"></textarea>
+      <button type="submit" class="'btn">Add note</button>
+    </form>
   </div>
-</ul>
-
-<form method="POST" align="center">
-  <textarea name="note" id="note" class="form-control"></textarea>
-  <div>
-    <button type="submit" class="'btn">Add note</button>
-  </div>
-</form>
-
 </section>
-
-
 {% endblock %}
