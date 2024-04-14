@@ -49,3 +49,18 @@ def delete_note():
             db.session.delete(note)
             db.session.commit()
             return jsonify({})
+        
+@views.route('/toggle-completed', methods=['POST'])
+@login_required
+def toggle_completed():
+    data = json.loads(request.data)
+    note_id = data['noteId']
+    completed = data['completed']
+    
+    note = Note.query.get(note_id)
+    if note and note.user_id == current_user.id:
+        note.completed = completed
+        db.session.commit()
+        return jsonify({'message': 'Note completed status updated successfully'})
+    else:
+        return jsonify({'error': 'Note not found or unauthorized'})
