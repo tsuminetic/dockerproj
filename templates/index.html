@@ -110,7 +110,7 @@
 }
 
   .aside-container {
-      background-color: rgba(128, 128, 128, 0.53);
+      background-color: #5955557e;
       width: 480px;
       height: 570px;
       border-radius: 10px;
@@ -131,7 +131,6 @@
       <p style="font-size: xx-large; padding-left:10px;color: rgb(255, 255, 255);">Lists</p>
       <hr>
       <div class="aside-content">
-        <p>hello</p>
       </div>
     </div>
   </aside>
@@ -139,7 +138,7 @@
 
 
 <section>
-  <h1 align="start" style="padding-left: 10px;margin-top: 1% ;">Welcome back, {{ user.name}}</h1>
+  <h1 align="start" style="padding-left: 10px;margin-top: 1% ;color: rgb(106, 106, 106) ;">Welcome back, {{ user.name}}</h1>
 
   <div class="notes-container">
     <ul class="list-group notes-list" id="notes">
@@ -160,6 +159,10 @@
     </form>
   </div>
 </section>
+
+
+
+
 
 <script>
 function toggleCompleted(noteId, checkbox) {
