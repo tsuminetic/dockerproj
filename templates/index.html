@@ -104,6 +104,11 @@
     background-color: rgba(255, 0, 0, 0.614);
   }
 
+  .completed {
+  text-decoration: line-through;
+  color: #888; /* Grayish color */
+}
+
   .aside-container {
       background-color: rgba(128, 128, 128, 0.53);
       width: 580px;
@@ -255,7 +260,72 @@ function toggleCompleted(noteId, checkbox) {
     });
 }
   </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var notes = document.querySelectorAll('.list-group-item');
   
+      notes.forEach(function(note) {
+        var textElement = note.querySelector('.note-text');
+        var deleteButton = note.querySelector('.close');
+        var checkbox = note.querySelector('.note-checkbox');
+        var text = textElement.textContent.trim();
+        var containerWidth = note.offsetWidth;
+        var buttonWidth = deleteButton.offsetWidth;
+        var availableWidth = containerWidth - buttonWidth - 20; // Adjust for padding/margin
+  
+        // Measure text width
+        textElement.style.visibility = 'hidden';
+        var textWidth = textElement.offsetWidth;
+        textElement.style.visibility = 'visible';
+  
+        // Compare text width with available width
+        if (textWidth > availableWidth) {
+          // Truncate text and add ellipsis
+          while (textElement.offsetWidth > availableWidth) {
+            text = text.slice(0, -1);
+            textElement.textContent = text + '...';
+          }
+        }
+  
+        // Toggle delete button visibility based on checkbox state
+        function toggleDeleteButtonVisibility() {
+          if (checkbox.checked) {
+            deleteButton.style.display = 'block';
+            textElement.classList.add('completed'); // Apply completed styling
+          } else {
+            deleteButton.style.display = 'none';
+            textElement.classList.remove('completed'); // Remove completed styling
+          }
+        }
+  
+        // Check initial state of checkbox and adjust delete button visibility
+        toggleDeleteButtonVisibility();
+  
+        // Add event listener to checkbox to toggle delete button visibility
+        checkbox.addEventListener('change', toggleDeleteButtonVisibility);
+      });
+    });
+  
+    function toggleCompleted(noteId, checkbox) {
+      fetch('/toggle-completed', {
+          method: 'POST',
+          body: JSON.stringify({ noteId: noteId, completed: checkbox.checked }),
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      })
+      .then(response => {
+          if (response.ok) {
+              console.log('Note completed status updated successfully');
+          } else {
+              console.error('Failed to update note completed status');
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+    }
+  </script>
   
 
 {% endblock %}
