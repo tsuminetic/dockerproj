@@ -28,7 +28,7 @@ def create_app():
 
 
 
-    from models import User, Note
+    from user.user import User
 
     #session manager
     login_manager=LoginManager()
@@ -41,8 +41,10 @@ def create_app():
 
     #creating the db models
     with app.app_context():
-        from models import db as models_db
-        models_db.create_all()
+        db.create_all()
+        # from models 
+        # from models import db as models_db
+        # models_db.create_all()
         
 
     return app
