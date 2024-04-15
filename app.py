@@ -28,7 +28,7 @@ def create_app():
 
 
 
-    from user.user import User
+    from models import User,Note
 
     #session manager
     login_manager=LoginManager()

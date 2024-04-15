@@ -11,7 +11,7 @@
   }
   .notes-container {
     height: 500px; /* Set a fixed height */
-    background-color: #746e6e7e; /* Set a different color for the container */
+    background-color: #5955557e; /* Set a different color for the container */
     padding: 10px; /* Add padding for better visibility */
     border-radius: 10px; /* Add rounded corners */
     margin-left: 1%;
@@ -24,7 +24,7 @@
     overflow-y: auto; /* Enable vertical scrollbar */
   }
   .list-group-item {
-    background-color: rgb(203, 242, 250); 
+    background-color: rgba(241, 241, 241, 0.555); 
     padding: 10px; 
     margin-bottom: 10px; /* Add space between list items */
     border-radius: 10px; /* Add rounded corners */
@@ -111,7 +111,7 @@
 
   .aside-container {
       background-color: rgba(128, 128, 128, 0.53);
-      width: 580px;
+      width: 480px;
       height: 570px;
       border-radius: 10px;
       float: right;
@@ -143,7 +143,7 @@
 
   <div class="notes-container">
     <ul class="list-group notes-list" id="notes">
-      {% for note in user.notes %}
+      {% for note in user.notes|reverse %}
       <li class="list-group-item">
         <input type="checkbox" class="note-checkbox" {% if note.completed %}checked{% endif %} onChange="toggleCompleted('{{ note.id }}', this)">
         <p class="note-text">{{ note.data }}</p>
@@ -155,91 +155,13 @@
     </ul>
     <hr>
     <form method="POST">
-      <textarea name="note" id="note" class="form-control" placeholder="Type your notes here"></textarea>
-      <button type="submit" class="'btn">Add note</button>
+      <textarea name="note" id="note" class="form-control"></textarea>
+      <button type="submit" class="'btn">Add task</button>
     </form>
   </div>
 </section>
 
-
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-      var notes = document.querySelectorAll('.list-group-item');
-  
-      notes.forEach(function(note) {
-          var textElement = note.querySelector('.note-text'); // Assuming there's a class "note-text" for the text content
-          var deleteButton = note.querySelector('.close'); // Assuming there's a class "close" for the delete button
-          var text = textElement.textContent.trim();
-          var containerWidth = note.offsetWidth; // Width of the note container
-          var buttonWidth = deleteButton.offsetWidth; // Width of the delete button
-          var availableWidth = containerWidth - buttonWidth; // Available space for text
-  
-          // Adjust available width for padding or margin if any
-          availableWidth -= 20; // Assuming 10px padding/margin on each side
-  
-          // Measure text width
-          textElement.style.visibility = 'hidden';
-          var textWidth = textElement.offsetWidth;
-          textElement.style.visibility = 'visible';
-  
-          // Compare text width with available width
-          if (textWidth > availableWidth) {
-              // Truncate text and add ellipsis
-              while (textElement.offsetWidth > availableWidth - 20) { // Adjust for padding/margin
-                  text = text.slice(0, -1);
-                  textElement.textContent = text + '...';
-              }
-          }
-      });
-  });
-  </script>
-
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    var notes = document.querySelectorAll('.list-group-item');
-
-    notes.forEach(function(note) {
-        var textElement = note.querySelector('.note-text');
-        var deleteButton = note.querySelector('.close');
-        var checkbox = note.querySelector('.note-checkbox');
-        var text = textElement.textContent.trim();
-        var containerWidth = note.offsetWidth;
-        var buttonWidth = deleteButton.offsetWidth;
-        var availableWidth = containerWidth - buttonWidth - 20; // Adjust for padding/margin
-
-        // Measure text width
-        textElement.style.visibility = 'hidden';
-        var textWidth = textElement.offsetWidth;
-        textElement.style.visibility = 'visible';
-
-        // Compare text width with available width
-        if (textWidth > availableWidth) {
-            // Truncate text and add ellipsis
-            while (textElement.offsetWidth > availableWidth) {
-                text = text.slice(0, -1);
-                textElement.textContent = text + '...';
-            }
-        }
-
-        // Toggle delete button visibility based on checkbox state
-        function toggleDeleteButtonVisibility() {
-            if (checkbox.checked) {
-                deleteButton.style.display = 'block';
-            } else {
-                deleteButton.style.display = 'none';
-            }
-        }
-
-        // Check initial state of checkbox and adjust delete button visibility
-        toggleDeleteButtonVisibility();
-
-        // Add event listener to checkbox to toggle delete button visibility
-        checkbox.addEventListener('change', toggleDeleteButtonVisibility);
-    });
-});
-
 function toggleCompleted(noteId, checkbox) {
     fetch('/toggle-completed', {
         method: 'POST',
