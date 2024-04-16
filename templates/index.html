@@ -65,7 +65,7 @@
   }
 
   textarea {
-    width: calc(100% - 120px); /* Adjust width */
+    width: calc(100% - 240px); /* Adjust width */
     height: 40px; /* Adjust height */
     /* padding: 10px; Add padding */
     border-radius: 10px; /* Add rounded corners */
@@ -73,7 +73,7 @@
     margin-bottom: 10px; /* Add space between textarea and button */
     position: absolute; /* Position the textarea */
     bottom: 10px; /* Distance from the bottom */
-    left: 10px; /* Distance from the left */
+    left: 13%; /* Distance from the left */
     font-size: large;
   }
   button[type="submit"] {
@@ -124,12 +124,28 @@
     .aside-content {
       padding: 20px;
     }
+
+    .duedate {
+  width: 10%;
+  height: 30px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* Optional: Style for the label */
+.duedate-label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+
 </style>
 
   <aside>
     <div class="aside-container">
-      <p style="font-size: xx-large; padding-left:10px;color: rgb(255, 255, 255);">Lists</p>
-      <hr>
       <div class="aside-content">
       </div>
     </div>
@@ -137,34 +153,74 @@
 
 
 
-<section>
-  <h1 align="start" style="padding-left: 10px;margin-top: 1% ;color: rgb(106, 106, 106) ;">Welcome back, {{ user.name}}</h1>
-
-  <div class="notes-container">
-    <ul class="list-group notes-list" id="notes">
-      {% for note in user.notes|reverse %}
-      <li class="list-group-item">
-        <input type="checkbox" class="note-checkbox" {% if note.completed %}checked{% endif %} onChange="toggleCompleted('{{ note.id }}', this)">
-        <p class="note-text">{{ note.data }}</p>
-        <button type="button" class="close" onClick="deleteNote('{{ note.id }}')">
-          <span aria-hidden="true" style="font-size: x-large;">&times;</span>
-        </button>
-      </li>
-      {% endfor %}
-    </ul>
-    <hr>
-    <form method="POST">
-      <textarea name="note" id="note" class="form-control"></textarea>
-      <button type="submit" class="'btn">Add task</button>
-    </form>
-  </div>
-</section>
+  <section>
+    <h1 align="start" style="padding-left: 10px;margin-top: 1% ;color: rgb(106, 106, 106) ;">Welcome back, {{ user.name}}</h1>
+  
+    <div class="notes-container">
+      <ul class="list-group notes-list" id="notes">
+        {% set today = current_date %}
+        {% set tomorrow = tomorrow_date %}
+        {% set future_dates = dict() %}
+        {% for note in user.notes|reverse %}
+          {% if note.due_date == today %}
+            {% set due_date = note.due_date.strftime('%B %dth') %}
+          {% elif note.due_date == tomorrow %}
+            {% set due_date = note.due_date.strftime('%B %dth') %}
+          {% else %}
+            {% set due_date = note.due_date.strftime('%B %dth') %}
+          {% endif %}
+          
+          {% if due_date not in future_dates %}
+            {% set _ = future_dates.update({due_date: []}) %}
+          {% endif %}
+          
+          {% set _ = future_dates[due_date].append(note) %}
+        {% endfor %}
+        
+        {% set sorted_dates = future_dates.keys()|sort %}
+        
+        {% for due_date in sorted_dates %}
+          <li class="due-date-header">
+            {% if due_date%}
+            {% if due_date==today.strftime('%B %dth') %}TODAY{% elif due_date==tomorrow.strftime('%B %dth') %}TOMORROW{% else %}{{ due_date }}{% endif %}
+          </li>
+          {% for task in future_dates[due_date] %}
+            <li class="list-group-item">
+              <input type="checkbox" class="note-checkbox" {% if task.completed %}checked{% endif %} onChange="toggleCompleted('{{ task.id }}', this)">
+              <p class="note-text">{{ task.data }}</p>
+              <button type="button" class="close" onClick="deleteNote('{{ task.id }}')">
+                <span aria-hidden="true" style="font-size: x-large;">&times;</span>
+              </button>
+            </li>
+          {% endfor %}
+        {% endfor %}
+      </ul>
+      <hr>
+      <form method="POST">
+        <textarea name="note" id="note" class="form-control"></textarea>
+        <input type="date" id="duedate" class="duedate" name="duedate">
+        <button type="submit" class="'btn">Add task</button>
+      </form>
+    </div>
+  </section>
+  
+  
 
 
 
 
 
 <script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Get today's date in the format YYYY-MM-DD
+    var today = new Date().toISOString().split('T')[0];
+    // Set the default value of the date input to today
+    document.getElementById('duedate').value = today;
+});
+
+
+
 function toggleCompleted(noteId, checkbox) {
     fetch('/toggle-completed', {
         method: 'POST',

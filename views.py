@@ -4,6 +4,7 @@ from models import Note
 from app import db
 import json
 from flask import url_for,redirect
+from datetime import datetime, timedelta  # Import datetime module
 
 
 #creating blueprint named views
@@ -16,8 +17,12 @@ views = Blueprint('views', __name__)
 
 def home():
     # if user adds note we get the note in a variable called note 
+    current_date = datetime.now().date()
+    tomorrow_date = current_date + timedelta(days=1)
+
     if request.method=='POST':
         note= request.form.get('note')
+        due_date = request.form.get('duedate')
 
         #if note is empty we flash that the note is empty
         if len(note)<1:
@@ -25,14 +30,14 @@ def home():
 
         else:
             # if note isnt empty we create an instance of the class note where data is the note we stored in the last block and user_id is the current users id
-            new_note=Note(data=note, user_id=current_user.id)
+            new_note = Note(data=note, due_date=datetime.strptime(due_date, '%Y-%m-%d'), user_id=current_user.id)
 
             #we add the instance to the database and commit
             db.session.add(new_note)
             db.session.commit()
             return redirect(url_for('views.home'))
 
-    return render_template("index.html", user= current_user)
+    return render_template("index.html", user= current_user,current_date=current_date, tomorrow_date=tomorrow_date)
 
 
 #we create another route which just takes the post method
